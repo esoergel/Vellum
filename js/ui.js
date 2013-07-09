@@ -33,7 +33,25 @@ formdesigner.ui = function () {
         DEBUG_MODE = false,
         MESSAGES_DIV = '#fd-messages';
 
-    that.ODK_ONLY_QUESTION_TYPES = ['image', 'audio', 'video', 'fieldlist', 'barcode', 'androidintent'];
+    that.MESSAGE_TYPES = {
+        "error": {
+            cssClass: "alert-error",
+            title: "Error",
+            icon: "icon-exclamation-sign"
+        },
+        "parse-warning": {
+            cssClass: "",
+            title: "Parse Warning",
+            icon: "icon-warning-sign"
+        },
+        "form-warning": {
+            cssClass: "",
+            title: "Form Warning",
+            icon: "icon-info-sign"
+        }
+    };
+
+    that.ODK_ONLY_QUESTION_TYPES = ['image', 'audio', 'video', 'barcode', 'androidintent'];
     
     that.currentErrors = [];
 
@@ -51,13 +69,13 @@ formdesigner.ui = function () {
             messages = ['' + messages];
         }
 
-        var $messageContainer = $(MESSAGES_DIV);
-        $messageContainer.empty();
-        $messageContainer.html(_.template($('#fd-template-message-alert').text(), {
-            messageType: formdesigner.util.MESSAGES[errorObj.level],
-            messages: messages
-        }));
-        $messageContainer.find('.alert').removeClass('hide').addClass('in');
+        $(MESSAGES_DIV)
+            .empty()
+            .html(_.template($('#fd-template-message-alert').text(), {
+                messageType: that.MESSAGE_TYPES[errorObj.level],
+                messages: messages
+            }))
+            .find('.alert').removeClass('hide').addClass('in');
     };
     
     that.clearMessages = function () {

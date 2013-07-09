@@ -39,24 +39,6 @@ formdesigner.util = (function(){
                              "bindElement/calculateAttr",
                              "bindElement/constraintAttr"];
 
-    that.MESSAGES = {
-        "error": {
-            cssClass: "alert-error",
-            title: "Error",
-            icon: "icon-exclamation-sign"
-        },
-        "parse-warning": {
-            cssClass: "",
-            title: "Parse Warning",
-            icon: "icon-warning-sign"
-        },
-        "form-warning": {
-            cssClass: "",
-            title: "Form Warning",
-            icon: "icon-info-sign"
-        }
-    };
-
     that.QUESTION_GROUPS = [
         {
             group: ['text', 'Text', 'icon-vellum-text'],  // [<default_slug>, <title>, <icon-class>]
@@ -420,12 +402,12 @@ formdesigner.util = (function(){
      */
     that.generate_question_id = function (question_id) {
         if (question_id) {
-            var match = /(.+)-\d$/.exec(question_id) ;
+            var match = /^copy-(\d+)-of-(.+)$/.exec(question_id) ;
             if (match) {
-                question_id = match[1]; 
+                question_id = match[2]; 
             }
             for (var i = 1;; i++) {
-                var new_id = question_id + "-" + i;
+                var new_id = "copy-" + i + "-of-" + question_id;
                 if (!formdesigner.model.questionIdCount(new_id)) {
                     return new_id; 
                 }
