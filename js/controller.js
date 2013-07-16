@@ -407,20 +407,6 @@ formdesigner.controller = (function () {
         return  that.form.dataTree.treeMap(treeFunc);
     };
 
-    that.getJSTreeTypeFromMugType = function (mugType) {
-        var typeString, type;
-
-        if (mugType.mug.properties.controlElement) {
-            typeString = mugType.typeSlug;
-        } else if (formdesigner.util.isReadOnly(mugType)) {
-            typeString = 'unknown';
-        } else {
-            typeString = 'datanode';
-        }
-        
-        return typeString;
-    };
-
     /**
      * Create a new node from mugType relative to the currently selected node.
      *
@@ -453,7 +439,7 @@ formdesigner.controller = (function () {
             },
             attr: {
                 id: mugType.ufid,
-                rel: that.getJSTreeTypeFromMugType(mugType)
+                rel: mugType.typeSlug
             },
             state: isGroupOrRepeat ? 'open' : undefined
         };
@@ -785,7 +771,7 @@ formdesigner.controller = (function () {
             that.form.replaceMugType(mugType, newMugType, 'control');
 
             formdesigner.ui.jstree("set_type", 
-                that.getJSTreeTypeFromMugType(newMugType), 
+                newMugType.typeSlug, 
                 '#' + mugType.ufid
             );
             
