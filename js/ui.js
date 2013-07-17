@@ -45,6 +45,139 @@ formdesigner.ui = function () {
         'stdAndroidIntent'
     ];
     
+    that.QUESTION_GROUPS = [
+        {
+            group: ['stdTextQuestion', 'Text'],  // <default_slug>, <title>
+            questions: [
+                'stdTextQuestion',
+                'stdTrigger'
+            ]
+        },
+        {
+            group: ['stdSelect', 'Multiple Choice'],
+            related: [
+                'stdItem'
+            ],
+            questions: [
+                'stdSelect',
+                'stdMSelect'
+            ]
+        },
+        {
+            group: ['stdInt', 'Number'],
+            questions: [
+                'stdInt',
+                'stdPhoneNumber',
+                'stdDouble',
+                'stdLong'
+            ]
+        },
+        {
+            group: ['stdDate', 'Date'],
+            questions: [
+                'stdDate',
+                'stdTime',
+                'stdDateTime'
+            ]
+        },
+        {
+            group: ['stdDataBindOnly', 'Hidden Value'],
+            showDropdown: false,
+            questions: [
+                'stdDataBindOnly'
+            ]
+        },
+        {
+            group: ['stdGroup', 'Groups'],
+            questions: [
+                'stdGroup',
+                'stdRepeat'
+            ]
+        },
+        {
+            group: ['stdImage', 'Multimedia Capture'],
+            questions: [
+                'stdImage',
+                'stdAudio',
+                'stdVideo'
+            ]
+        },
+        {
+            group: ['stdGeopoint', 'Advanced', ''],
+            textOnly: true,
+            questions: [
+                'stdGeopoint',
+                'stdBarcode',
+                'stdSecret',
+                'stdAndroidIntent'
+            ]
+        }
+    ];
+
+    that.getJSTreeTypes = function() {
+        var typeSlugs = $.map(that.QUESTIONS, function (el, i) { return i; }),
+            types = {};
+
+        typeSlugs = _.without(typeSlugs, 'stdDataBindOnly', 'stdItem');
+
+        for (var i = 0, slug; i < typeSlugs.length; slug = typeSlugs[i++]) { 
+            var children;
+            if (slug === "stdGroup" || slug === "stdRepeat") {
+                children = typeSlugs;
+            } else if (slug === "stdSelect" || slug === "stdMSelect") {
+                children = ['stdItem'];
+            } else {
+                children = "none";
+            }
+
+            types[slug] = {valid_children: children};
+        }
+
+        return {
+            "max_children" : -1,
+            "valid_children" : typeSlugs.concat(['stdDataBindOnly']),  // valid root node types
+            "types" : types
+        };
+    };
+
+    that.getQuestionTypeGroupID = function (slug) {
+        return "fd-question-group-" + slug;
+    };
+
+    that.QUESTIONS = {};
+    that.QUESTION_TYPE_TO_GROUP = {};
+    // this is necessary (as opposed to getting it from the mugtype at the same
+    // time as node creation) because jstree types are used to determine whether
+    // it's a valid insertion, so the mugtype can't be found in the form by node
+    // id at the point in time we might otherwise want to use it
+    that.QUESTION_TYPE_TO_ICONS = {};
+
+    _.each(that.QUESTION_GROUPS, function (groupData) {
+        var groupSlug = groupData.group[0];
+
+        var getQuestionData = function (questionType) {
+            var mugType = formdesigner.controller.getMugTypeByQuestionType(
+                    questionType),
+                questionData = [questionType, mugType.typeName, mugType.icon];
+
+            that.QUESTIONS[questionType] = questionData[1];
+            that.QUESTION_TYPE_TO_GROUP[questionType] = groupSlug;
+            that.QUESTION_TYPE_TO_ICONS[questionType] = questionData[2];
+            return questionData;
+        };
+        
+        groupData.questions = _.map(groupData.questions, getQuestionData);
+        if (groupData.related && groupData.related.length) {
+            groupData.related = _.map(groupData.related, getQuestionData);
+        }
+
+        if (typeof groupData.group[2] === 'undefined') {
+            var groupMugType = formdesigner.controller.getMugTypeByQuestionType(
+                groupData.group[0]);
+            groupData.group[2] = groupMugType.icon;
+        }
+    });
+
     var initMessagesPane = function () {
         var messagesDiv = $(MESSAGES_DIV);
         var displayClasses = {"error":   "fd-message ui-state-error ui-corner-all",
@@ -174,7 +307,7 @@ formdesigner.ui = function () {
 
         self.init = function () {
             self.defaultQuestion = new formdesigner.ui.QuestionTypeButton(self.groupData.group);
-            self.groupID = formdesigner.util.getQuestionTypeGroupID(self.defaultQuestion.slug);
+            self.groupID = that.getQuestionTypeGroupID(self.defaultQuestion.slug);
             if ('showDropdown' in self.groupData) {
                 self.showDropdown = self.groupData.showDropdown;
             }
@@ -228,9 +361,9 @@ formdesigner.ui = function () {
     };
 
     that.activateQuestionTypeGroup = function (qytpe) {
-        var groupSlug = formdesigner.util.QUESTION_TYPE_TO_GROUP[qytpe];
+        var groupSlug = that.QUESTION_TYPE_TO_GROUP[qytpe];
         if (groupSlug) {
-            var $questionGroup = $('#' + formdesigner.util.getQuestionTypeGroupID(groupSlug));
+            var $questionGroup = $('#' + that.getQuestionTypeGroupID(groupSlug));
             $questionGroup.find('.fd-question-type-related').removeClass('disabled');
         }
     };
@@ -246,7 +379,7 @@ formdesigner.ui = function () {
 
         var $questionGroupContainer = $('#fd-container-question-type-group');
 
-        _.each(formdesigner.util.QUESTION_GROUPS, function (groupData) {
+        _.each(that.QUESTION_GROUPS, function (groupData) {
             var questionGroup = new formdesigner.ui.QuestionTypeGroup(groupData);
             questionGroup.init();
             $questionGroupContainer.append(questionGroup.getFormattedTemplate());
@@ -1528,7 +1661,7 @@ formdesigner.ui = function () {
                     formdesigner.controller.handleTreeDrop(data.o, data.r);
                 }
             },
-            "types": formdesigner.util.getJSTreeTypes(),
+            "types": that.getJSTreeTypes(),
             "plugins" : [ "themes", "json_data", "ui", "crrm", "types", "dnd" ]
         }).bind("select_node.jstree", 
             that.handleNodeSelect
@@ -1573,7 +1706,7 @@ formdesigner.ui = function () {
         if (!qtype && mugType) {
             qtype = mugType.typeSlug;
         }
-        iconClass = formdesigner.util.QUESTION_TYPE_TO_ICONS[qtype];
+        iconClass = that.QUESTION_TYPE_TO_ICONS[qtype];
         if (!iconClass) {
             iconClass = 'icon-circle';
         }
