@@ -379,7 +379,7 @@ formdesigner.ui = function () {
 
             if (e.property === 'nodeID' && e.element === 'dataElement') {
                 var node = $('#' + e.mugTypeUfid);
-                if (mugType.typeSlug === "datanode" && e.val &&
+                if (mugType.typeSlug === "stdDataBindOnly" && e.val &&
                     e.val !== that.jstree("get_text", node)) 
                 {
                     that.jstree('rename_node', node, e.val);
@@ -404,14 +404,12 @@ formdesigner.ui = function () {
         }
 
         var ufid = $(data.rslt.obj[0]).prop('id'),
-            mugType = formdesigner.controller.getMTFromFormByUFID(ufid),
-            typeSlug;
+            mugType = formdesigner.controller.getMTFromFormByUFID(ufid);
 
         that.displayMugProperties(mugType);
-        typeSlug = mugType.typeSlug;
         // First neutralize all the existing buttons.
         that.resetQuestionTypeGroups();
-        that.activateQuestionTypeGroup(typeSlug);
+        that.activateQuestionTypeGroup(mugType.typeSlug);
     };
 
     /**

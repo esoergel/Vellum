@@ -6,7 +6,12 @@ formdesigner.widgets = (function () {
     var that = {};
 
     that.unchangeableQuestionTypes = [
-        "item", "group", "repeat", "datanode", "trigger", "unknown", "androidintent"
+        "stdItem",
+        "stdGroup",
+        "stdRepeat",
+        "stdDataBindOnly",
+        "stdTrigger",
+        "stdAndroidIntent"
     ];
 
     that.getGroupName = function (path) {
@@ -1319,7 +1324,7 @@ formdesigner.widgets = (function () {
             elements.push({widgetType: "readonlyControl", path: "system/readonlyControl"});
         }
 
-        if (mugType.typeSlug == 'androidintent') {
+        if (mugType.typeSlug == 'stdAndroidIntent') {
             elements.push({widgetType: "androidIntentAppId", path: "system/androidIntentAppId"});
             elements.push({widgetType: "androidIntentExtra", path: "system/androidIntentExtra"});
             elements.push({widgetType: "androidIntentResponse", path: "system/androidIntentResponse"});
@@ -1379,8 +1384,8 @@ formdesigner.widgets = (function () {
     };
 
     that.getContentSection = function (mugType) {
-        var showAddFormButton = (mugType.typeSlug !== 'group' && 
-                                 mugType.typeSlug !== 'repeat');
+        var showAddFormButton = (mugType.typeSlug !== 'stdGroup' && 
+                                 mugType.typeSlug !== 'stdRepeat');
             
         elements = [{
                 widgetType: "itext",
@@ -1401,13 +1406,13 @@ formdesigner.widgets = (function () {
     that.getLogicSection = function (mugType) {
         var properties;
 
-        if (mugType.typeSlug === 'datanode') {
+        if (mugType.typeSlug === 'stdDataBindOnly') {
             properties = [
                 "bindElement/calculateAttr",
                 "bindElement/relevantAttr",
             ];
-        } else if (mugType.typeSlug === 'group' || 
-                   mugType.typeSlug === 'repeat') 
+        } else if (mugType.typeSlug === 'stdGroup' || 
+                   mugType.typeSlug === 'stdRepeat') 
         {
             properties = [
                 "bindElement/requiredAttr",
@@ -1442,7 +1447,7 @@ formdesigner.widgets = (function () {
 	                        showAddFormButton: false});
         }
 
-        if (mugType.typeSlug == 'repeat') {
+        if (mugType.typeSlug == 'stdRepeat') {
             elements.push(wrapAsGeneric("controlElement/repeat_count"));
             elements.push(wrapAsGeneric("controlElement/no_add_remove"));
         }
@@ -1471,7 +1476,7 @@ formdesigner.widgets = (function () {
         // what type an element is, it's difficult to do this properly with
         // controlElement.constraintMsgItextID.presence = "notallowed" in the group
         // mugtype definition.
-        if (!(mugType.typeSlug === 'group' || mugType.typeSlug === 'repeat')) {
+        if (!(mugType.typeSlug === 'stdGroup' || mugType.typeSlug === 'stdRepeat')) {
             properties.push("bindElement/constraintMsgItextID");
         }
 

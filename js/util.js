@@ -41,69 +41,69 @@ formdesigner.util = (function(){
 
     that.QUESTION_GROUPS = [
         {
-            group: ['text', 'Text', 'icon-vellum-text'],  // [<default_slug>, <title>, <icon-class>]
+            group: ['stdTextQuestion', 'Text', 'icon-vellum-text'],  // [<default_slug>, <title>, <icon-class>]
             questions: [
-                ['text', 'Text Question', 'icon-vellum-text'],  // [<slug>, <title>, <icon-class>]
-                ['trigger', 'Label', 'icon-tag']
+                ['stdTextQuestion', 'Text Question', 'icon-vellum-text'],  // [<slug>, <title>, <icon-class>]
+                ['stdTrigger', 'Label', 'icon-tag']
             ]
         },
         {
-            group: ['1select', 'Multiple Choice', 'icon-vellum-single-select'],
+            group: ['stdSelect', 'Multiple Choice', 'icon-vellum-single-select'],
             related: [
-                ['item', 'Choice', 'icon-circle-blank']
+                ['stdItem', 'Choice', 'icon-circle-blank']
             ],
             questions: [
-                ['1select', 'Single Answer', 'icon-vellum-single-select'],
-                ['select', 'Multiple Answer', 'icon-vellum-multi-select']
+                ['stdSelect', 'Single Answer', 'icon-vellum-single-select'],
+                ['stdMSelect', 'Multiple Answer', 'icon-vellum-multi-select']
             ]
         },
         {
-            group: ['int', 'Number', 'icon-vellum-numeric'],
+            group: ['stdInt', 'Number', 'icon-vellum-numeric'],
             questions: [
-                ['int', 'Integer', 'icon-vellum-numeric'],
-                ['phonenumber', 'Phone Number or Numeric ID', 'icon-signal'],
-                ['double', 'Decimal', 'icon-vellum-decimal'],
-                ['long', 'Long', 'icon-vellum-long']
+                ['stdInt', 'Integer', 'icon-vellum-numeric'],
+                ['stdPhoneNumber', 'Phone Number or Numeric ID', 'icon-signal'],
+                ['stdDouble', 'Decimal', 'icon-vellum-decimal'],
+                ['stdLong', 'Long', 'icon-vellum-long']
             ]
         },
         {
-            group: ['date', 'Date', 'icon-calendar'],
+            group: ['stdDate', 'Date', 'icon-calendar'],
             questions: [
-                ['date', 'Date', 'icon-calendar'],
-                ['time', 'Time', 'icon-time'],
-                ['datetime', 'Date and Time', 'icon-vellum-datetime']
+                ['stdDate', 'Date', 'icon-calendar'],
+                ['stdTime', 'Time', 'icon-time'],
+                ['stdDateTime', 'Date and Time', 'icon-vellum-datetime']
             ]
         },
         {
-            group: ['datanode', 'Hidden Value', 'icon-vellum-variable'],
+            group: ['stdDataBindOnly', 'Hidden Value', 'icon-vellum-variable'],
             showDropdown: false,
             questions: [
-                ['datanode', 'Hidden Value', 'icon-vellum-variable']
+                ['stdDataBindOnly', 'Hidden Value', 'icon-vellum-variable']
             ]
         },
         {
-            group: ['group', 'Groups', 'icon-folder-open'],
+            group: ['stdGroup', 'Groups', 'icon-folder-open'],
             questions: [
-                ['group', 'Group', 'icon-folder-open'],
-                ['repeat', 'Repeat Group', 'icon-retweet']
+                ['stdGroup', 'Group', 'icon-folder-open'],
+                ['stdRepeat', 'Repeat Group', 'icon-retweet']
             ]
         },
         {
-            group: ['image', 'Multimedia Capture', 'icon-camera'],
+            group: ['stdImage', 'Multimedia Capture', 'icon-camera'],
             questions: [
-                ['image', 'Image Capture', 'icon-camera'],
-                ['audio', 'Audio Capture', 'icon-vellum-audio-capture'],
-                ['video', 'Video Capture', 'icon-facetime-video']
+                ['stdImage', 'Image Capture', 'icon-camera'],
+                ['stdAudio', 'Audio Capture', 'icon-vellum-audio-capture'],
+                ['stdVideo', 'Video Capture', 'icon-facetime-video']
             ]
         },
         {
-            group: ['geopoint', 'Advanced', ''],
+            group: ['stdGeopoint', 'Advanced', ''],
             textOnly: true,
             questions: [
-                ['geopoint', 'GPS', 'icon-map-marker'],
-                ['barcode', 'Barcode Scan', 'icon-barcode'],
-                ['secret', 'Password', 'icon-key'],
-                ['androidintent', 'Android App Callout', 'icon-vellum-android-intent']
+                ['stdGeopoint', 'GPS', 'icon-map-marker'],
+                ['stdBarcode', 'Barcode Scan', 'icon-barcode'],
+                ['stdSecret', 'Password', 'icon-key'],
+                ['stdAndroidIntent', 'Android App Callout', 'icon-vellum-android-intent']
             ]
         }
     ];
@@ -112,16 +112,16 @@ formdesigner.util = (function(){
         var typeSlugs = $.map(that.QUESTIONS, function (el, i) { return i; }),
             types = {};
 
-        for (var k in ['datanode', 'item']) {
+        for (var k in ['stdDataBindOnly', 'stdItem']) {
             typeSlugs.splice(typeSlugs.indexOf(k), 1);
         }
 
         for (var i = 0, slug; i < typeSlugs.length; slug = typeSlugs[i++]) { 
             var children;
-            if (slug === "group" || slug === "repeat") {
+            if (slug === "stdGroup" || slug === "stdRepeat") {
                 children = typeSlugs;
-            } else if (slug === "1select" || slug === "select") {
-                children = ['item'];
+            } else if (slug === "stdSelect" || slug === "stdMSelect") {
+                children = ['stdItem'];
             } else {
                 children = "none";
             }
@@ -131,7 +131,7 @@ formdesigner.util = (function(){
 
         return {
             "max_children" : -1,
-            "valid_children" : typeSlugs.concat(['datanode']),  // valid root node types
+            "valid_children" : typeSlugs.concat(['stdDataBindOnly']),  // valid root node types
             "types" : types
         };
     };
@@ -183,7 +183,7 @@ formdesigner.util = (function(){
     that.QUESTION_TYPE_TO_ICONS = getQuestionTypeToIcon();
     
     // keep questions from showing up in the dropdown list here
-    that.UNEDITABLE_QUESTIONS = ["unknown", "item"];
+    that.UNEDITABLE_QUESTIONS = ["unknown", "stdItem"];
     
     that.getQuestionList = function () {
         var ret = [];
@@ -863,7 +863,7 @@ formdesigner.util = (function(){
     that.mugToXPathReference = function (mug) {
         // for select items, return the quoted value.
         // for everything else return the path
-        if (mug.typeSlug === "item") {
+        if (mug.typeSlug === "stdItem") {
             return '"' + mug.mug.properties.controlElement.properties.defaultValue + '"';
         } else {
             // for the currently selected mug, return a "."
@@ -878,12 +878,12 @@ formdesigner.util = (function(){
     };
         
     that.isSelect = function (mug) {
-        return (mug.typeSlug === "select" ||
-                mug.typeSlug === "1select");
+        return (mug.typeSlug === "stdMSelect" ||
+                mug.typeSlug === "stdSelect");
     };
     
     that.isSelectItem = function (mug) {
-        return (mug.typeSlug === "item");
+        return (mug.typeSlug === "stdItem");
     };
 
     /**
