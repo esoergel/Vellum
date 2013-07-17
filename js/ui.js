@@ -37,7 +37,13 @@ formdesigner.ui = function () {
         ERROR_MSG_DIV = '#fd-parse-error',
         FORM_WARN_DIV = '#fd-form-warn';
 
-    that.ODK_ONLY_QUESTION_TYPES = ['image', 'audio', 'video', 'barcode', 'androidintent'];
+    that.ODK_ONLY_QUESTION_TYPES = [
+        'stdImage',
+        'stdAudio', 
+        'stdVideo',
+        'stdBarcode', 
+        'stdAndroidIntent'
+    ];
     
     var initMessagesPane = function () {
         var messagesDiv = $(MESSAGES_DIV);
