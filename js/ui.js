@@ -132,6 +132,8 @@ formdesigner.ui = function () {
 
             types[slug] = {valid_children: children};
         }
+        types.stdItem = {valid_children: "none"};
+        types.stdDataBindOnly = {valid_children: "none"};
 
         return {
             "max_children" : -1,
